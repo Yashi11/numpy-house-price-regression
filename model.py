@@ -133,9 +133,12 @@ def ols_fit(X, y):
     # Taking the gradient of MSE and setting it to zero gives (X.T@X)@W=X.T@Y
     X = np.asarray(X,dtype=float)
     y = np.asarray(y, dtype=float)
-    left = X.T@X
-    right = X.T@y
-    theta = np.linalg.solve(left,right)
+    theta, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
+    
+    ## This only works for invertible matrix
+    # left = X.T@X
+    # right = X.T@y
+    # theta = np.linalg.solve(left,right)
     return theta
 
 # Step 14 - ols_predict
@@ -255,6 +258,19 @@ def evaluate_predictions(y_true, y_pred):
     residual_summary_ = residual_summary(y_true,y_pred)
     return {'mae':mae,'rmse':rmse,'r2':r2,'residual_summary':residual_summary_}
 
-# Step 24 - house_price_pipeline (not yet solved)
-# TODO: implement
+# Step 24 - house_price_pipeline
+def house_price_pipeline(X, y, ratio_num_idx, ratio_den_idx, cat_labels=None, train_ratio=0.7, val_ratio=0.15, seed=42, iqr_k=1.5):
+    # TODO: Run full clean->featurize->split->standardize->OLS->evaluate pipeline...
+    X = prepare_cleaned_features(X,iqr_k)
+    X = assemble_feature_matrix(X,ratio_num_idx,ratio_den_idx,cat_labels)
+    splits = make_train_val_test(X,y,train_ratio,val_ratio,seed)
+    splits, mean, std = standardize_and_add_bias(splits)
+    left = splits['X_train'].T@splits['X_train']
+    right = splits['X_train'].T@splits['y_train']
+    theta = ols_fit(splits['X_train'],splits['y_train'])
+    predictions_test = ols_predict(splits['X_test'],theta)
+    predictions_val = ols_predict(splits['X_val']),theta
+    val_metrics = evaluate_predictions(splits['y_val'],predictions_val)
+    test_metrics = evaluate_predictions(splits['y_test'],predictions_test)
+    return {'theta':theta,'y_test':splits['y_test'],'y_test_pred':predictions_test,'test_metrics':test_metrics,'val_metrics':val_metrics}
 
