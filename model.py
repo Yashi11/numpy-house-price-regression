@@ -128,8 +128,15 @@ def subset_xy(X, y, indices):
     # TODO: Select the rows of X and y at the given indices.
     return X[indices],y[indices]
 
-# Step 13 - ols_fit (not yet solved)
-# TODO: implement
+# Step 13 - ols_fit
+def ols_fit(X, y):
+    # Taking the gradient of MSE and setting it to zero gives (X.T@X)@W=X.T@Y
+    X = np.asarray(X,dtype=float)
+    y = np.asarray(y, dtype=float)
+    left = X.T@X
+    right = X.T@y
+    theta = np.linalg.solve(left,right)
+    return theta
 
 # Step 14 - ols_predict (not yet solved)
 # TODO: implement
