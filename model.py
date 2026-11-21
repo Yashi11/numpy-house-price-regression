@@ -269,7 +269,7 @@ def house_price_pipeline(X, y, ratio_num_idx, ratio_den_idx, cat_labels=None, tr
     right = splits['X_train'].T@splits['y_train']
     theta = ols_fit(splits['X_train'],splits['y_train'])
     predictions_test = ols_predict(splits['X_test'],theta)
-    predictions_val = ols_predict(splits['X_val']),theta
+    predictions_val = ols_predict(splits['X_val'],theta)
     val_metrics = evaluate_predictions(splits['y_val'],predictions_val)
     test_metrics = evaluate_predictions(splits['y_test'],predictions_test)
     return {'theta':theta,'y_test':splits['y_test'],'y_test_pred':predictions_test,'test_metrics':test_metrics,'val_metrics':val_metrics}
