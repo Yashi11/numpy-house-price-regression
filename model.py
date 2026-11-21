@@ -83,8 +83,15 @@ def one_hot_encode(labels):
     unique_labels=np.where(mask,1,0)
     return unique_labels.astype(float)
 
-# Step 7 - fit_standardizer (not yet solved)
-# TODO: implement
+# Step 7 - fit_standardizer
+def fit_standardizer(X):
+    # TODO: Compute per-column mean and std used to standardize features...
+    X = np.asarray(X, dtype=float)
+    means = np.mean(X,axis=0)
+    stds = np.std(X, axis=0)
+    mask = stds==0.0
+    stds = np.where(mask,1.0,stds)
+    return means,stds
 
 # Step 8 - apply_standardizer (not yet solved)
 # TODO: implement
